@@ -14,14 +14,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     gnupg2 \
     ca-certificates \
     software-properties-common \
-    unzip \
-    supervisor \
-    wget 
-
-# proxy to expose attestation server outside the enclave
-RUN wget -O vsock-to-ip http://public.artifacts.marlin.pro/projects/enclaves/vsock-to-ip_v1.0.0_linux_amd64
-RUN chmod +x vsock-to-ip
-
+    unzip 
+        
 # Install Chromia CLI
 RUN curl -fsSL https://apt.chromia.com/chromia.gpg -o /usr/share/keyrings/chromia.gpg
 RUN echo "deb [signed-by=/usr/share/keyrings/chromia.gpg] https://apt.chromia.com stable main" \
@@ -46,6 +40,8 @@ COPY . .
 RUN ["bun", "install"]
 RUN ["chr", "build"]
 
-RUN ["bash", "./script/entrypoint.sh"]
+# RUN ["bash", "./script/entrypoint.sh"]
+# Default command to start the node
+CMD ["chr", "node", "start"]
 
 
