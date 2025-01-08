@@ -15,7 +15,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     ca-certificates \
     software-properties-common \
     unzip 
-        
+
 # Install Chromia CLI
 RUN curl -fsSL https://apt.chromia.com/chromia.gpg -o /usr/share/keyrings/chromia.gpg
 RUN echo "deb [signed-by=/usr/share/keyrings/chromia.gpg] https://apt.chromia.com stable main" \
@@ -40,8 +40,5 @@ COPY . .
 RUN ["bun", "install"]
 RUN ["chr", "build"]
 
-# RUN ["bash", "./script/entrypoint.sh"]
 # Default command to start the node
 CMD ["chr", "node", "start"]
-
-

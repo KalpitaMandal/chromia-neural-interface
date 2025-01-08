@@ -48,24 +48,6 @@ services:
     volumes:
       - ./chromia.yml:/app/chromia.yml
 
-  bun-dev:
-    build:
-      context: .
-      dockerfile: Dockerfile.bun
-    environment:
-      - XAI_API_KEY=${XAI_API_KEY}
-      - CHR_NODE_API_URL=http://localhost:9870
-    tty: true
-    stdin_open: true
-    command: sh
-    # depends_on:
-    #   chr-node:
-    #     condition: service_healthy
-    networks:
-      - app-network
-    ports:
-      - '3000:3000'
-
 # Volumes and networks
 volumes:
   postgres_data: 
