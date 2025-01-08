@@ -4,7 +4,7 @@ blockchains:
 compile:
   rellVersion: 0.13.5
 database:
-  # host: postgres
+  host: postgres
   schema: schema_ai_agent_tutorial
 test:
   modules:

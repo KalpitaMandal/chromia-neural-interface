@@ -1,24 +1,51 @@
-# Dockerfile.chr-node for Chromia Node
+# Dockerfile.chr-node for Chromia Node & installs
 
-FROM ubuntu:20.04
+FROM --platform=linux/amd64 ubuntu:20.04
 
 # Set environment variables to avoid prompts
 ENV DEBIAN_FRONTEND=noninteractive
 
+# Set working directory
+WORKDIR /app
+
 # Install dependencies for chr-node
-RUN apt-get update && apt-get install -y \
-    curl gnupg2 ca-certificates software-properties-common
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    curl \
+    gnupg2 \
+    ca-certificates \
+    software-properties-common \
+    unzip \
+    supervisor \
+    wget 
+
+# proxy to expose attestation server outside the enclave
+RUN wget -O vsock-to-ip http://public.artifacts.marlin.pro/projects/enclaves/vsock-to-ip_v1.0.0_linux_amd64
+RUN chmod +x vsock-to-ip
 
 # Install Chromia CLI
 RUN curl -fsSL https://apt.chromia.com/chromia.gpg -o /usr/share/keyrings/chromia.gpg
 RUN echo "deb [signed-by=/usr/share/keyrings/chromia.gpg] https://apt.chromia.com stable main" \
     > /etc/apt/sources.list.d/chromia.list
+
+# Install Chromia CLI
 RUN apt-get update && apt-get install -y chr
 
-# Set working directory
-WORKDIR /app
+# Install Bun
+RUN curl -fsSL https://bun.sh/install | bash
+
+# Add these lines to ensure bun is in PATH
+ENV BUN_INSTALL="/root/.bun"
+ENV PATH="/root/.bun/bin:$PATH"
+
+RUN chr --version
+
+RUN rm -rf /var/lib/apt/lists/*
 
 COPY . .
 
-# Default command to start the node
-CMD ["chr", "node", "start"]
+RUN ["bun", "install"]
+RUN ["chr", "build"]
+
+RUN ["bash", "./script/entrypoint.sh"]
+
+
