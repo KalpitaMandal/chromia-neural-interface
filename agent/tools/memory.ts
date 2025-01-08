@@ -3,7 +3,8 @@ import { ChromiaDB, ShortTermMemory } from "../services/chromia";
 import { llm } from "../services/openai";
 
 export class MemoryTool {
-  model: string = "grok-beta";
+  // model: string = "grok-beta";
+  model: string = "llama-3.1-8b-instant";
   shortTermMemories: { role: string; content: string }[] = [];
   longTermMemory: string = "";
   agentName: string = "";

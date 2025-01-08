@@ -1,0 +1,25 @@
+FROM oven/bun:latest
+
+# Install nodejs and npm
+RUN apt-get update && apt-get install -y nodejs npm
+
+# Set working directory
+WORKDIR /app
+
+# Copy package files
+COPY package.json bun.lockb* ./
+
+# Install dependencies using npm or Bun
+RUN npm install -g bun --force
+
+# Install dependencies with Bun
+RUN bun install
+
+# Copy rest of the application
+COPY . .
+
+# Expose the port your app runs on
+EXPOSE 3000
+
+# Command to run the dev server
+CMD ["bun", "run", "dev"]

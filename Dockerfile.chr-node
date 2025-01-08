@@ -1,0 +1,24 @@
+# Dockerfile.chr-node for Chromia Node
+
+FROM ubuntu:20.04
+
+# Set environment variables to avoid prompts
+ENV DEBIAN_FRONTEND=noninteractive
+
+# Install dependencies for chr-node
+RUN apt-get update && apt-get install -y \
+    curl gnupg2 ca-certificates software-properties-common
+
+# Install Chromia CLI
+RUN curl -fsSL https://apt.chromia.com/chromia.gpg -o /usr/share/keyrings/chromia.gpg
+RUN echo "deb [signed-by=/usr/share/keyrings/chromia.gpg] https://apt.chromia.com stable main" \
+    > /etc/apt/sources.list.d/chromia.list
+RUN apt-get update && apt-get install -y chr
+
+# Set working directory
+WORKDIR /app
+
+COPY . .
+
+# Default command to start the node
+CMD ["chr", "node", "start"]

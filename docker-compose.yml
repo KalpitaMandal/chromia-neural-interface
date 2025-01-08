@@ -1,0 +1,75 @@
+version: '3.7'
+
+services:
+  # Frontend service
+  frontend:
+    build:
+      context: ./ui
+      dockerfile: Dockerfile
+    volumes:
+      - ./ui:/usr/share/nginx/html
+    ports:
+      - '80:80'
+    networks:
+      - app-network
+
+  # Postgres service
+  postgres:
+    image: postgres:16.3-alpine3.20
+    environment:
+      POSTGRES_PASSWORD: postchain
+      POSTGRES_DB: postchain
+      POSTGRES_USER: postchain
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    ports:
+      - '5432:5432'
+    networks:
+      - app-network
+
+  # Chromia node service
+  chr-node:
+    build:
+      context: .
+      dockerfile: Dockerfile.chr-node
+    networks:
+      - app-network
+    depends_on:
+      - postgres
+    ports:
+      - '9870:9870'
+      - '7750:7750'
+      - '7740:7740'
+    healthcheck:
+      test: ['CMD', 'pg_isready', '-h', 'postgres', '-U', 'postgres']
+      interval: 30s
+      retries: 5
+    volumes:
+      - ./chromia.yml:/app/chromia.yml
+
+  bun-dev:
+    build:
+      context: .
+      dockerfile: Dockerfile.bun
+    environment:
+      - XAI_API_KEY=${XAI_API_KEY}
+      - CHR_NODE_API_URL=http://chr-node:9870
+    tty: true
+    stdin_open: true
+    command: sh
+    depends_on:
+      chr-node:
+        condition: service_healthy
+    networks:
+      - app-network
+    ports:
+      - '3000:3000'
+
+# Volumes and networks
+volumes:
+  postgres_data: 
+
+networks:
+  app-network:
+    driver: bridge
