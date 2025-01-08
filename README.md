@@ -86,42 +86,16 @@ erDiagram
 ## How to Run
 
 ### Prerequisites
-- Install [Bun](https://bun.sh/)
-- Install [Chromia CLI](https://docs.chromia.com/intro/installation/cli-installation)
+- Install [Docker]([https://bun.sh/](https://docs.docker.com/engine/install/ubuntu/))
 
 ### Steps
-1. Install dependencies:
+1. Install dependencies and setup
    ```sh
-   bun install
+   bash build
    ```
    Update `XAI_API_KEY` in `.env`.
 
-2. Build the Chromia node:
+2. Start bun dev server
    ```sh
-   chr build
+   bash start.sh
    ```
-
-3. Start the Chromia node:
-   ```sh
-   chr node start
-   ```
-   To start with a wiped database:
-   ```sh
-   chr node start --wipe
-   ```
-
-4. [Optional] In another terminal, start the UI at localhost:1234
-    ```sh
-    bun run ui
-    ```
-
-5. In another terminal, run the AI Agent:
-   ```sh
-   bun run dev
-   ```
-
-6. Navigate to the provided URL in your browser.
-    ```
-    http://localhost:1234/?sessionId=<session_id>
-    ```
-
